@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StatusUI : MonoBehaviour
+public class StatusUI : BaseUI
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void SetInfo(BaseUIData uiData)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        base.SetInfo(uiData);
     }
 }
