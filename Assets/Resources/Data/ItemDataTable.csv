@@ -1,0 +1,14 @@
+﻿item_id,item_name,attack_power,defense,health,critical
+11001,WoodenSword,10,0,0,0
+11002,Axe,20,0,0,0
+21001,Wooden Shield ,0,10,0,0
+21002,Iron Shield,0,20,0,0
+31001,Wooden Chest Armor,10,10,0,0
+31002,Iron Chest Armor,30,30,0,0
+41001,Leather Helmet,10,10,0,0
+41002,Iron Helmet,20,20,0,0
+51001,Leather Boots,10,10,0,0
+51002,Iron Boots,20,20,0,0
+61001,Ring of Protection,0,100,0,0
+61002,Ring of Strength,0,0,100,0
+61003,Ring of Ciritical,0,0,0,100
