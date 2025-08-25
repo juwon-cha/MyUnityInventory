@@ -7,6 +7,10 @@ public class GameManager : SingletonBehaviour<GameManager>
     protected override void Init()
     {
         base.Init();
-        // GameManager 초기화 코드 작성
+    }
+
+    private void Start()
+    {
+        UIManager.Instance.OpenUI<MainMenuUI>(new BaseUIData());
     }
 }

@@ -1,18 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class MainMenuUI : MonoBehaviour
+public class MainMenuUI : BaseUI
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private TextMeshProUGUI goldTxt;
+    [SerializeField] private TextMeshProUGUI nameTxt;
+    [SerializeField] private TextMeshProUGUI levelTxt;
+    [SerializeField] private TextMeshProUGUI levelAmountTxt;
+    [SerializeField] private TextMeshProUGUI DescriptionTxt;
+    [SerializeField] private Slider expSlider;
+
+    [SerializeField] private Button statusBtn;
+    [SerializeField] private Button inventoryBtn;
+
+    public override void SetInfo(BaseUIData uiData)
     {
-        
+        base.SetInfo(uiData);
+
+        SetMainMenuButtons();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void SetMainMenuButtons()
     {
-        
+        statusBtn.onClick.AddListener(() =>
+        {
+            UIManager.Instance.OpenUI<StatusUI>(new BaseUIData());
+        });
+
+        inventoryBtn.onClick.AddListener(() =>
+        {
+            UIManager.Instance.OpenUI<InventoryUI>(new BaseUIData());
+        });
     }
 }
