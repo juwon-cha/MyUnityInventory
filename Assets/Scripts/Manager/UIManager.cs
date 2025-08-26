@@ -96,4 +96,11 @@ public class UIManager : SingletonBehaviour<UIManager>
             frontUI.CloseUI(true);
         }
     }
+
+    // 특정 UI 화면이 열려있는지 확인. 열려있는 UI화면(객체) 반환
+    public BaseUI GetActiveUI<T>()
+    {
+        var uiType = typeof(T);
+        return openUIPool.ContainsKey(uiType) ? openUIPool[uiType].GetComponent<BaseUI>() : null;
+    }
 }

@@ -23,14 +23,40 @@ public class MainMenuUI : BaseUI
 
     private void SetMainMenuButtons()
     {
-        statusBtn.onClick.AddListener(() =>
-        {
-            UIManager.Instance.OpenUI<StatusUI>(new BaseUIData());
-        });
+        statusBtn.onClick.AddListener(OpenStatusPopup);
 
-        inventoryBtn.onClick.AddListener(() =>
-        {
-            UIManager.Instance.OpenUI<InventoryUI>(new BaseUIData());
-        });
+        inventoryBtn.onClick.AddListener(OpenInventoryPopup);
+    }
+
+    private void OpenStatusPopup()
+    {
+        HideMainMenuButtons();
+
+        var uiData = new BaseUIData();
+        uiData.OnClose = ShowMainMenuButtons;
+
+        UIManager.Instance.OpenUI<StatusUI>(uiData);
+    }
+
+    private void OpenInventoryPopup()
+    {
+        HideMainMenuButtons();
+
+        var uiData = new BaseUIData();
+        uiData.OnClose = ShowMainMenuButtons;
+
+        UIManager.Instance.OpenUI<InventoryUI>(uiData);
+    }
+
+    public void ShowMainMenuButtons()
+    {
+        statusBtn.gameObject.SetActive(true);
+        inventoryBtn.gameObject.SetActive(true);
+    }
+
+    private void HideMainMenuButtons()
+    {
+        statusBtn.gameObject.SetActive(false);
+        inventoryBtn.gameObject.SetActive(false);
     }
 }
