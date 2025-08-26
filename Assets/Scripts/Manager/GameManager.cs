@@ -9,6 +9,11 @@ public class GameManager : SingletonBehaviour<GameManager>
         base.Init();
     }
 
+    private void Awake()
+    {
+        DataManager.Instance.LoadDataTables();
+    }
+
     private void Start()
     {
         UIManager.Instance.OpenUI<MainMenuUI>(new BaseUIData());

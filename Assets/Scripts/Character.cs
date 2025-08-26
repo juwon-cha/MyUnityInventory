@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private string characterName;
+    private int level;
+    private int health;
+    private int attackPower;
+    private int defense;
+    private int experience;
+    private int critical;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    Dictionary<int, ItemData> inventory = new Dictionary<int, ItemData>();
 }

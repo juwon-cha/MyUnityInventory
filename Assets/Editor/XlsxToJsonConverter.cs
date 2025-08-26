@@ -125,6 +125,7 @@ public class XlsxToJsonConverter : EditorWindow
                 string json = JsonUtility.ToJson(dataTable, true);
                 File.WriteAllText(jsonOutputPath, json, Encoding.UTF8);
 
+                // JSON 파일이 Project 창에 나타날 수 있도록 새로고침
                 AssetDatabase.Refresh();
                 Debug.Log($"Successfully converted {dataTable.items.Count} items from XLSX to JSON at {jsonOutputPath}");
                 EditorUtility.DisplayDialog("Success", "XLSX to JSON conversion completed successfully!", "OK");

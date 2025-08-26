@@ -14,12 +14,12 @@ public class DataManager : SingletonBehaviour<DataManager>
         base.Init();
     }
 
-    private void Awake()
+    public void LoadDataTables()
     {
-        LoadItemData("ItemData");
+        LoadItemDataTable("ItemData");
     }
 
-    private void LoadItemData(string fileName)
+    private void LoadItemDataTable(string fileName)
     {
         // Resources 폴더에서 ItemData.json 파일을 텍스트 에셋으로 불러옴
         // 파일 확장자(.json)는 경로에 포함하지 않음

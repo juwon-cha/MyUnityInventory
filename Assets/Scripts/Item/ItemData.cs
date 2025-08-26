@@ -1,6 +1,16 @@
 using System;
 using System.Collections.Generic;
 
+public enum EItemType
+{
+    Weapon = 1,
+    Shield,
+    ChestArmor,
+    Helmet,
+    Boots,
+    Accessory,
+}
+
 [Serializable]
 public class ItemData
 {
