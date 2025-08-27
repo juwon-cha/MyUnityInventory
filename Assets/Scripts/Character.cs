@@ -16,18 +16,10 @@ public class Character : MonoBehaviour
 
     private const int INVENTORY_MAX_COUNT = 120;
 
-    private void Awake()
+    private void Start()
     {
         Inventory = new InventoryData();
         Inventory.SetInventoryMaxCount(INVENTORY_MAX_COUNT);
-    }
-
-    public void AcquireAllItems()
-    {
-        Dictionary<int, ItemData> allItemDatabase = DataManager.Instance.ItemDatabase;
-        foreach(var item in allItemDatabase.Values)
-        {
-            Inventory.AddItem(item);
-        }
+        Inventory.SetDefaultData();
     }
 }

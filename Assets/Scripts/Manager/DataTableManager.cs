@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DataManager : SingletonBehaviour<DataManager>
+public class DataTableManager : SingletonBehaviour<DataTableManager>
 {
     public Dictionary<int, ItemData> ItemDatabase { get; private set; } = new Dictionary<int, ItemData>();
 

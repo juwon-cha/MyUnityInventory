@@ -78,7 +78,7 @@ public class InventoryUI : BaseUI
             if (slot != null)
             {
                 // 슬롯에 필요한 데이터(ItemID)를 담아 객체 생성
-                var slotData = new InventoryItemSlotData { ItemID = item.item_id };
+                var slotData = new InventoryItemSlotData { ItemID = item.ItemID };
 
                 // 슬롯에 데이터를 전달하여 이미지 표시
                 slot.UpdateSlotData(slotData);

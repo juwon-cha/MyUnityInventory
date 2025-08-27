@@ -13,14 +13,34 @@ public class InventoryItemSlot : MonoBehaviour
     [SerializeField] private Image itemIcon;
     [SerializeField] private GameObject equipIcon;
 
+    private bool isEquipped = false;
+
     private InventoryItemSlotData slotData;
+    private InventoryData inventoryData;
 
     // Constants
     private const string ITEM_ICON_PATH = "Textures/Items/";
 
+    private void Start()
+    {
+        slotButton.onClick.AddListener(() =>
+        {
+            if (isEquipped)
+            {
+                UnequipItem();
+            }
+            else
+            {
+                EquipItem();
+            }
+        });
+
+        equipIcon.SetActive(false);
+    }
+
     public void UpdateSlotData(InventoryItemSlotData data)
     {
-        this.slotData = data;
+        slotData = data;
 
         // 데이터가 없거나 ItemID가 0이면 빈 슬롯으로 처리
         if (slotData == null || slotData.ItemID == 0)
@@ -30,10 +50,10 @@ public class InventoryItemSlot : MonoBehaviour
         }
 
         // 아이템 ID를 기반으로 이미지 업데이트
-        UpdateImage();
+        UpdateSlotImage();
     }
 
-    private void UpdateImage()
+    private void UpdateSlotImage()
     {
         // StringBuilder를 사용해 ItemID로 아이콘 파일 이름을 만든다.
         // 예: 12001 -> "12001"
@@ -59,11 +79,39 @@ public class InventoryItemSlot : MonoBehaviour
 
     private void EquipItem()
     {
+        inventoryData = GameManager.Instance.PlayerCharacter.Inventory;
+        if (inventoryData == null)
+        {
+            Debug.LogError("InventoryData is not set!");
+            return;
+        }
+
+        var itemData = DataTableManager.Instance.GetItem(slotData.ItemID);
+
+        inventoryData.EquipItem(itemData.item_id);
+
         equipIcon.SetActive(true);
+        isEquipped = true;
     }
 
     private void UnequipItem()
     {
+        if(!isEquipped)
+        {
+            return;
+        }
+
+        inventoryData = GameManager.Instance.PlayerCharacter.Inventory;
+        if (inventoryData == null)
+        {
+            Debug.LogError("InventoryData is not set!");
+            return;
+        }
+
+        var itemData = DataTableManager.Instance.GetItem(slotData.ItemID);
+
+        inventoryData.UnEquipItem(itemData.item_id);
+
         equipIcon.SetActive(false);
     }
 

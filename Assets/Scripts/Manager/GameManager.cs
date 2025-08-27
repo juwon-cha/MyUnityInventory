@@ -11,18 +11,13 @@ public class GameManager : SingletonBehaviour<GameManager>
     {
         base.Init();
 
+        DataTableManager.Instance.LoadDataTables();
+
         PlayerCharacter = playerCharacter;
     }
 
     private void Start()
     {
-        DataManager.Instance.LoadDataTables();
-
-        if(PlayerCharacter != null)
-        {
-            PlayerCharacter.AcquireAllItems();
-        }
-
         UIManager.Instance.OpenUI<MainMenuUI>(new BaseUIData());
     }
 }
