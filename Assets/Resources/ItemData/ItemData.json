@@ -3,7 +3,7 @@
         {
             "item_id": 11001,
             "item_name": "WoodenSword",
-            "attack_power": 10,
+            "attack_power": 50,
             "defense": 0,
             "health": 0,
             "critical": 0
@@ -11,7 +11,7 @@
         {
             "item_id": 11002,
             "item_name": "Axe",
-            "attack_power": 20,
+            "attack_power": 100,
             "defense": 0,
             "health": 0,
             "critical": 0
@@ -35,7 +35,7 @@
         {
             "item_id": 31001,
             "item_name": "Wooden Chest Armor",
-            "attack_power": 10,
+            "attack_power": 0,
             "defense": 10,
             "health": 0,
             "critical": 0
@@ -43,7 +43,7 @@
         {
             "item_id": 31002,
             "item_name": "Iron Chest Armor",
-            "attack_power": 30,
+            "attack_power": 0,
             "defense": 30,
             "health": 0,
             "critical": 0
@@ -51,7 +51,7 @@
         {
             "item_id": 41001,
             "item_name": "Leather Helmet",
-            "attack_power": 10,
+            "attack_power": 0,
             "defense": 10,
             "health": 0,
             "critical": 0
@@ -59,7 +59,7 @@
         {
             "item_id": 41002,
             "item_name": "Iron Helmet",
-            "attack_power": 20,
+            "attack_power": 0,
             "defense": 20,
             "health": 0,
             "critical": 0
@@ -67,7 +67,7 @@
         {
             "item_id": 51001,
             "item_name": "Leather Boots",
-            "attack_power": 10,
+            "attack_power": 0,
             "defense": 10,
             "health": 0,
             "critical": 0
@@ -75,7 +75,7 @@
         {
             "item_id": 51002,
             "item_name": "Iron Boots",
-            "attack_power": 20,
+            "attack_power": 0,
             "defense": 20,
             "health": 0,
             "critical": 0

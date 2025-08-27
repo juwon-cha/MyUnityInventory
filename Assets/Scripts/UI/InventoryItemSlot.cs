@@ -13,34 +13,21 @@ public class InventoryItemSlot : MonoBehaviour
     [SerializeField] private Image itemIcon;
     [SerializeField] private GameObject equipIcon;
 
-    private bool isEquipped = false;
-
     private InventoryItemSlotData slotData;
-    private InventoryData inventoryData;
+    InventoryData inventoryData;
 
     // Constants
     private const string ITEM_ICON_PATH = "Textures/Items/";
 
     private void Start()
     {
-        slotButton.onClick.AddListener(() =>
-        {
-            if (isEquipped)
-            {
-                UnequipItem();
-            }
-            else
-            {
-                EquipItem();
-            }
-        });
-
-        equipIcon.SetActive(false);
+        slotButton.onClick.AddListener(OnSlotClick);
     }
 
     public void UpdateSlotData(InventoryItemSlotData data)
     {
         slotData = data;
+        inventoryData = GameManager.Instance.PlayerCharacter.Inventory;
 
         // 데이터가 없거나 ItemID가 0이면 빈 슬롯으로 처리
         if (slotData == null || slotData.ItemID == 0)
@@ -51,6 +38,16 @@ public class InventoryItemSlot : MonoBehaviour
 
         // 아이템 ID를 기반으로 이미지 업데이트
         UpdateSlotImage();
+        UpdateEquipStatus();
+    }
+
+    public void UpdateEquipStatus()
+    {
+        if (inventoryData != null && slotData != null)
+        {
+            bool isCurrentlyEquipped = inventoryData.IsEquipped(slotData.ItemID);
+            equipIcon.SetActive(isCurrentlyEquipped);
+        }
     }
 
     private void UpdateSlotImage()
@@ -79,7 +76,6 @@ public class InventoryItemSlot : MonoBehaviour
 
     private void EquipItem()
     {
-        inventoryData = GameManager.Instance.PlayerCharacter.Inventory;
         if (inventoryData == null)
         {
             Debug.LogError("InventoryData is not set!");
@@ -89,19 +85,10 @@ public class InventoryItemSlot : MonoBehaviour
         var itemData = DataTableManager.Instance.GetItem(slotData.ItemID);
 
         inventoryData.EquipItem(itemData.item_id);
-
-        equipIcon.SetActive(true);
-        isEquipped = true;
     }
 
     private void UnequipItem()
     {
-        if(!isEquipped)
-        {
-            return;
-        }
-
-        inventoryData = GameManager.Instance.PlayerCharacter.Inventory;
         if (inventoryData == null)
         {
             Debug.LogError("InventoryData is not set!");
@@ -111,8 +98,6 @@ public class InventoryItemSlot : MonoBehaviour
         var itemData = DataTableManager.Instance.GetItem(slotData.ItemID);
 
         inventoryData.UnEquipItem(itemData.item_id);
-
-        equipIcon.SetActive(false);
     }
 
     // 슬롯의 이미지를 지워 빈 슬롯처럼 보이게 함
@@ -120,5 +105,20 @@ public class InventoryItemSlot : MonoBehaviour
     {
         itemIcon.sprite = null;
         itemIcon.color = new Color(1, 1, 1, 0); // 이미지를 투명하게 만듦
+    }
+
+    private void OnSlotClick()
+    {
+        if (slotData == null || inventoryData == null) return;
+
+        // 데이터의 현재 상태를 직접 확인하여 장착/해제 결정
+        if (inventoryData.IsEquipped(slotData.ItemID))
+        {
+            UnequipItem();
+        }
+        else
+        {
+            EquipItem();
+        }
     }
 }

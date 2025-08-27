@@ -197,6 +197,8 @@ public class InventoryData
 
         // 장착한 아이템을 EquippedItemDic에 추가
         EquippedItemDict.Add(itemID, new UserItemStats(itemData.attack_power, itemData.defense, itemData.health, itemData.critical));
+
+        OnInventoryChanged?.Invoke();
     }
 
     public void UnEquipItem(int itemID)
@@ -234,6 +236,8 @@ public class InventoryData
 
         // 해제한 아이템 EquippedItemDic에서 제거
         EquippedItemDict.Remove(itemID);
+
+        OnInventoryChanged?.Invoke();
     }
 
     public UserItemStats GetUserTotalItemStats()

@@ -12,6 +12,7 @@ public class InventoryUI : BaseUI
     [SerializeField] private Button closeBtn;
 
     private InventoryData inventoryData;
+    private List<InventoryItemSlot> itemSlots = new List<InventoryItemSlot>();
 
     // Constants
     private const string IITEM_SLOT_PATH = "Prefabs/UI/ItemSlot";
@@ -37,13 +38,13 @@ public class InventoryUI : BaseUI
         // 다른 인벤토리를 표시하게 될 경우를 대비해 기존 이벤트 구독 해제
         if (inventoryData != null)
         {
-            inventoryData.OnInventoryChanged -= UpdateInventoryUI;
+            inventoryData.OnInventoryChanged -= OnInventoryChanged;
         }
 
         inventoryData = inventory;
 
         // 인벤토리에 아이템이 추가되거나 삭제될 때마다 UpdateInventoryUI가 자동으로 호출되도록 이벤트 구독
-        inventoryData.OnInventoryChanged += UpdateInventoryUI;
+        inventoryData.OnInventoryChanged += OnInventoryChanged;
 
         // UI가 처음 열릴 때 현재 인벤토리 상태를 기준으로 UI 즉시 업데이트
         UpdateInventoryUI();
@@ -65,6 +66,7 @@ public class InventoryUI : BaseUI
         {
             Destroy(child.gameObject);
         }
+        itemSlots.Clear();
 
         // 현재 인벤토리에 있는 모든 아이템을 순회
         foreach (var item in inventoryData.GetAllItems())
@@ -82,7 +84,20 @@ public class InventoryUI : BaseUI
 
                 // 슬롯에 데이터를 전달하여 이미지 표시
                 slot.UpdateSlotData(slotData);
+                itemSlots.Add(slot);
             }
+        }
+    }
+
+    // OnInventoryChanged 이벤트가 호출될 때, 모든 슬롯의 장착 상태를 다시 그리도록 수정
+    private void OnInventoryChanged()
+    {
+        // 모든 슬롯을 파괴하지 않고 상태만 업데이트
+        inventoryInfoText.text = $"Inventory {inventoryData.items.Count} / {inventoryData.MaxItemCount}";
+
+        foreach (var slot in itemSlots)
+        {
+            slot.UpdateEquipStatus();
         }
     }
 
@@ -90,7 +105,7 @@ public class InventoryUI : BaseUI
     {
         if (inventoryData != null)
         {
-            inventoryData.OnInventoryChanged -= UpdateInventoryUI;
+            inventoryData.OnInventoryChanged -= OnInventoryChanged;
         }
     }
 }
