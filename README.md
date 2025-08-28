@@ -68,7 +68,7 @@ Unity 에디터 상단 메뉴의 **[Tools > Convert Excel to Json]** 를 통해 
 ## 🚀 시작하기
 
 1.  이 저장소를 클론(`git clone`)한다.
-2.  Unity Hub에서 프로젝트를 열어준다. (Unity 2021.3.17f1 버전에서 제작되었습니다.)
+2.  Unity Hub에서 프로젝트를 열어준다. (Unity 2021.3.17f1 버전에서 제작되었다.)
 3.  `Assets/Scenes/MyUnityInventory.unity` 씬을 연다.
 4.  Play 버튼을 눌러 게임을 실행한다.
 
@@ -94,5 +94,5 @@ MyUnityInventory/
 ## 📜 사용된 에셋
 
 * **Font**: DNFBitBitv2
-* **UI Button Set**: FreeButtonSet by Cainos
-* **Item Icons**: Pixel Art Icon Pack - RPG by Cainos
+* **UI Button Set**: [Simple Button Set 01](https://assetstore.unity.com/packages/2d/gui/icons/simple-button-set-01-153979)
+* **Item Icons**: [Pixel Art Icon Pack - RPG](https://assetstore.unity.com/packages/2d/gui/icons/pixel-art-icon-pack-rpg-158343)
