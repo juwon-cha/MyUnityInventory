@@ -84,7 +84,7 @@
             "item_id": 61001,
             "item_name": "Ring of Protection",
             "attack_power": 0,
-            "defense": 100,
+            "defense": 200,
             "health": 0,
             "critical": 0
         },
@@ -93,7 +93,7 @@
             "item_name": "Ring of Strength",
             "attack_power": 0,
             "defense": 0,
-            "health": 100,
+            "health": 200,
             "critical": 0
         },
         {
@@ -102,7 +102,7 @@
             "attack_power": 0,
             "defense": 0,
             "health": 0,
-            "critical": 100
+            "critical": 200
         }
     ]
 }

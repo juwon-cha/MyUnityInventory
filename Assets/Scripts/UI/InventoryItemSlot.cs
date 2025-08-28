@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,120 +6,52 @@ using UnityEngine.UI;
 public class InventoryItemSlotData
 {
     public int ItemID;
+    public bool IsEquipped;
 }
 
-public class InventoryItemSlot : MonoBehaviour
+public class InventoryItemSlot : MonoBehaviour, IInventoryItemSlotView
 {
     [SerializeField] private Button slotButton;
     [SerializeField] private Image itemIcon;
     [SerializeField] private GameObject equipIcon;
 
-    private InventoryItemSlotData slotData;
-    InventoryData inventoryData;
+    private InventoryItemSlotPresenter presenter;
 
-    // Constants
-    private const string ITEM_ICON_PATH = "Textures/Items/";
+    public event Action OnClicked;
 
-    private void Start()
+    private void Awake()
     {
-        slotButton.onClick.AddListener(OnSlotClick);
+        slotButton.onClick.AddListener(() => OnClicked?.Invoke());
     }
 
-    public void UpdateSlotData(InventoryItemSlotData data)
+    // 상위 View(InventoryUI)가 이 슬롯을 초기화할 때 호출
+    public void Initialize(InventoryItemSlotData data)
     {
-        slotData = data;
-        inventoryData = GameManager.Instance.PlayerCharacter.Inventory;
-
-        // 데이터가 없거나 ItemID가 0이면 빈 슬롯으로 처리
-        if (slotData == null || slotData.ItemID == 0)
-        {
-            ClearSlot();
-            return;
-        }
-
-        // 아이템 ID를 기반으로 이미지 업데이트
-        UpdateSlotImage();
-        UpdateEquipStatus();
+        // 자신을 제어할 Presenter를 생성하고 연결
+        presenter = new InventoryItemSlotPresenter(this, data);
     }
 
-    public void UpdateEquipStatus()
+    public void SetIcon(Sprite icon)
     {
-        if (inventoryData != null && slotData != null)
-        {
-            bool isCurrentlyEquipped = inventoryData.IsEquipped(slotData.ItemID);
-            equipIcon.SetActive(isCurrentlyEquipped);
-        }
+        itemIcon.sprite = icon;
+        itemIcon.color = Color.white;
     }
 
-    private void UpdateSlotImage()
+    public void ShowEquipIcon(bool isVisible)
     {
-        // StringBuilder를 사용해 ItemID로 아이콘 파일 이름을 만든다.
-        // 예: 12001 -> "12001"
-        StringBuilder sb = new StringBuilder(slotData.ItemID.ToString());
-        var itemIconName = sb.ToString();
-
-        // 텍스처를 불러옴
-        var itemIconTexture = Resources.Load<Texture2D>($"{ITEM_ICON_PATH}{itemIconName}");
-
-        if (itemIconTexture != null)
-        {
-            // 텍스처 로딩에 성공하면 스프라이트를 생성하여 Image에 적용
-            itemIcon.sprite = Sprite.Create(itemIconTexture, new Rect(0, 0, itemIconTexture.width, itemIconTexture.height), new Vector2(0.5f, 0.5f));
-            itemIcon.color = Color.white; // 이미지가 보이도록 설정
-        }
-        else
-        {
-            // 텍스처를 찾지 못하면 경고를 출력하고 슬롯 비움
-            Debug.LogWarning($"Item icon texture not found for name: {itemIconName}");
-            ClearSlot();
-        }
+        equipIcon.SetActive(isVisible);
     }
 
-    private void EquipItem()
-    {
-        if (inventoryData == null)
-        {
-            Debug.LogError("InventoryData is not set!");
-            return;
-        }
-
-        var itemData = DataTableManager.Instance.GetItem(slotData.ItemID);
-
-        inventoryData.EquipItem(itemData.item_id);
-    }
-
-    private void UnequipItem()
-    {
-        if (inventoryData == null)
-        {
-            Debug.LogError("InventoryData is not set!");
-            return;
-        }
-
-        var itemData = DataTableManager.Instance.GetItem(slotData.ItemID);
-
-        inventoryData.UnEquipItem(itemData.item_id);
-    }
-
-    // 슬롯의 이미지를 지워 빈 슬롯처럼 보이게 함
-    private void ClearSlot()
+    public void ClearSlot()
     {
         itemIcon.sprite = null;
-        itemIcon.color = new Color(1, 1, 1, 0); // 이미지를 투명하게 만듦
+        itemIcon.color = new Color(1, 1, 1, 0);
+        equipIcon.SetActive(false);
     }
 
-    private void OnSlotClick()
+    private void OnDestroy()
     {
-        if (slotData == null || inventoryData == null) return;
-
-        // 데이터의 현재 상태를 직접 확인하여 장착/해제 결정
-        if (inventoryData.IsEquipped(slotData.ItemID))
-        {
-            UnequipItem();
-        }
-        else
-        {
-            EquipItem();
-        }
+        // 이 슬롯 오브젝트가 파괴될 때 Presenter 정리
+        presenter?.Dispose();
     }
 }

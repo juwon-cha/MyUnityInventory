@@ -44,6 +44,7 @@ public class InventoryData
     public Dictionary<int, UserItemStats> EquippedItemDict = new Dictionary<int, UserItemStats>();
 
     public event Action OnInventoryChanged;
+    public event Action OnEquipmentChanged;
 
     public void SetDefaultData()
     {
@@ -199,6 +200,7 @@ public class InventoryData
         EquippedItemDict.Add(itemID, new UserItemStats(itemData.attack_power, itemData.defense, itemData.health, itemData.critical));
 
         OnInventoryChanged?.Invoke();
+        OnEquipmentChanged?.Invoke();
     }
 
     public void UnEquipItem(int itemID)
@@ -238,6 +240,19 @@ public class InventoryData
         EquippedItemDict.Remove(itemID);
 
         OnInventoryChanged?.Invoke();
+        OnEquipmentChanged?.Invoke();
+    }
+
+    public void ToggleEquipItem(int itemID)
+    {
+        if (IsEquipped(itemID))
+        {
+            UnEquipItem(itemID);
+        }
+        else
+        {
+            EquipItem(itemID);
+        }
     }
 
     public UserItemStats GetUserTotalItemStats()

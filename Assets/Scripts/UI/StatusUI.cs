@@ -1,46 +1,49 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StatusUI : BaseUI
+public class StatusUI : BaseUI, IStatusView
 {
     [SerializeField] private TextMeshProUGUI attackText;
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI criticalText;
-
     [SerializeField] private Button closeBtn;
 
-    private InventoryData inventoryData;
+    private StatusPresenter presenter;
+
+    public event Action OnCloseButtonClicked;
 
     public override void SetInfo(BaseUIData uiData)
     {
         base.SetInfo(uiData);
 
-        SetStatusInfo();
+        var model = GameManager.Instance.PlayerCharacter.Inventory;
+        presenter = new StatusPresenter(this, model);
 
-        closeBtn.onClick.AddListener(() =>
-        {
-            CloseUI();
-        });
+        closeBtn.onClick.RemoveAllListeners();
+        closeBtn.onClick.AddListener(() => OnCloseButtonClicked?.Invoke());
     }
 
-    private void SetStatusInfo()
+    public void UpdateStats(UserItemStats totalStats)
     {
-        inventoryData = GameManager.Instance.PlayerCharacter.Inventory;
-        if(inventoryData == null)
-        {
-            Debug.LogError("InventoryData is not set!");
-            return;
-        }
+        // Presenter가 전달한 데이터로 UI를 그리기만 함
+        attackText.text = $"공격력\n{totalStats.attack_power}";
+        defenseText.text = $"방어력\n{totalStats.defense}";
+        hpText.text = $"체력\n{totalStats.health}";
+        criticalText.text = $"치명타\n{totalStats.critical}";
+    }
 
-        UserItemStats userTotalItemStats = inventoryData.GetUserTotalItemStats();
+    public void Close()
+    {
+        CloseUI();
+    }
 
-        attackText.text = $"공격력\n{userTotalItemStats.attack_power}";
-        defenseText.text = $"방어력\n{userTotalItemStats.defense}";
-        hpText.text = $"체력\n{userTotalItemStats.health}";
-        criticalText.text = $"치명타\n{userTotalItemStats.critical}";
+    private void OnDestroy()
+    {
+        presenter?.Dispose();
     }
 }

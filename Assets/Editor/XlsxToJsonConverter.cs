@@ -74,8 +74,19 @@ public class XlsxToJsonConverter : EditorWindow
             return;
         }
 
-        // 파일을 스트림으로 연다. using을 사용 -> 작업이 끝나면 스트림이 자동으로 닫힌다.
-        using (var stream = File.Open(xlsxFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        // 엑셀 파일을 연 상태로 변환이 안되는 문제가 있어 메모리 스트림으로 변경
+        //// 파일을 스트림으로 연다. using을 사용 -> 작업이 끝나면 스트림이 자동으로 닫힌다.
+        //using (var stream = File.Open(xlsxFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        //{
+        //    // 스트림을 이용해 ExcelReader 생성
+        //    using (var reader = ExcelReaderFactory.CreateReader(stream))
+        //    {
+
+        // 파일의 모든 내용을 바이트 배열로 메모리에 한 번에 읽어옵니다.
+        byte[] fileBytes = File.ReadAllBytes(xlsxFilePath);
+
+        // 바이트 배열을 기반으로 메모리 스트림을 생성합니다.
+        using (var stream = new MemoryStream(fileBytes))
         {
             // 스트림을 이용해 ExcelReader 생성
             using (var reader = ExcelReaderFactory.CreateReader(stream))

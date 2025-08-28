@@ -1,111 +1,76 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryUI : BaseUI
+public class InventoryUI : BaseUI, IInventoryView
 {
     [SerializeField] private TextMeshProUGUI inventoryInfoText;
     [SerializeField] private Transform itemParent;
-
     [SerializeField] private Button closeBtn;
 
-    private InventoryData inventoryData;
-    private List<InventoryItemSlot> itemSlots = new List<InventoryItemSlot>();
+    private InventoryPresenter presenter;
 
     // Constants
     private const string IITEM_SLOT_PATH = "Prefabs/UI/ItemSlot";
+
+    public event Action<int> OnItemSlotClicked;
+    public event Action OnCloseButtonClicked;
 
     public override void SetInfo(BaseUIData uiData)
     {
         base.SetInfo(uiData);
 
-        if(GameManager.Instance.PlayerCharacter != null)
-        {
-            InitInventoryUI(GameManager.Instance.PlayerCharacter.Inventory);
-        }
+        // Model을 가져와 Presenter를 생성하고 View(자기 자신)와 연결
+        var model = GameManager.Instance.PlayerCharacter.Inventory;
+        presenter = new InventoryPresenter(this, model);
 
-        closeBtn.onClick.RemoveAllListeners(); // 기존 리스너 중복 등록 방지
-        closeBtn.onClick.AddListener(() =>
-        {
-            CloseUI();
-        });
+        closeBtn.onClick.RemoveAllListeners();
+        closeBtn.onClick.AddListener(() => OnCloseButtonClicked?.Invoke());
     }
 
-    private void InitInventoryUI(InventoryData inventory)
+    public void DisplayItems(List<InventoryItemSlotData> items)
     {
-        // 다른 인벤토리를 표시하게 될 경우를 대비해 기존 이벤트 구독 해제
-        if (inventoryData != null)
-        {
-            inventoryData.OnInventoryChanged -= OnInventoryChanged;
-        }
-
-        inventoryData = inventory;
-
-        // 인벤토리에 아이템이 추가되거나 삭제될 때마다 UpdateInventoryUI가 자동으로 호출되도록 이벤트 구독
-        inventoryData.OnInventoryChanged += OnInventoryChanged;
-
-        // UI가 처음 열릴 때 현재 인벤토리 상태를 기준으로 UI 즉시 업데이트
-        UpdateInventoryUI();
-    }
-
-    private void UpdateInventoryUI()
-    {
-        if (inventoryData == null)
-        {
-            Debug.LogError("InventoryData is not set!");
-            return;
-        }
-
-        // 인벤토리 아이템 개수 텍스트 업데이트
-        inventoryInfoText.text = $"Inventory {inventoryData.items.Count} / {inventoryData.MaxItemCount}";
-
-        // 이전에 생성했던 모든 슬롯 오브젝트들 파괴 -> UI 초기화
+        // Presenter의 지시에 따라 화면을 그리는 역할만 수행
         foreach (Transform child in itemParent)
         {
             Destroy(child.gameObject);
         }
-        itemSlots.Clear();
 
-        // 현재 인벤토리에 있는 모든 아이템을 순회
-        foreach (var item in inventoryData.GetAllItems())
+        foreach (var slotData in items)
         {
-            // 슬롯 프리팹을 itemParent 아래에 생성
-            var itemObj = Instantiate(Resources.Load<GameObject>($"{IITEM_SLOT_PATH}"), itemParent);
+            var itemObj = Instantiate(Resources.Load<GameObject>(IITEM_SLOT_PATH), itemParent);
+            var slotView = itemObj.GetComponent<InventoryItemSlot>();
 
-            // 생성한 오브젝트에서 InventoryItemSlot 컴포넌트를 가져옴
-            InventoryItemSlot slot = itemObj.GetComponent<InventoryItemSlot>();
-
-            if (slot != null)
+            if (slotView != null)
             {
-                // 슬롯에 필요한 데이터(ItemID)를 담아 객체 생성
-                var slotData = new InventoryItemSlotData { ItemID = item.ItemID };
+                // 슬롯 View 초기화
+                slotView.Initialize(slotData);
 
-                // 슬롯에 데이터를 전달하여 이미지 표시
-                slot.UpdateSlotData(slotData);
-                itemSlots.Add(slot);
+                // 슬롯의 클릭 이벤트 구독 -> 상위 Presenter에게 그대로 전달
+                var view = (IInventoryItemSlotView)slotView;
+                view.OnClicked += () => OnItemSlotClicked?.Invoke(slotData.ItemID);
             }
         }
     }
 
-    // OnInventoryChanged 이벤트가 호출될 때, 모든 슬롯의 장착 상태를 다시 그리도록 수정
-    private void OnInventoryChanged()
+    public void UpdateInventoryInfo(string infoText)
     {
-        // 모든 슬롯을 파괴하지 않고 상태만 업데이트
-        inventoryInfoText.text = $"Inventory {inventoryData.items.Count} / {inventoryData.MaxItemCount}";
-
-        foreach (var slot in itemSlots)
-        {
-            slot.UpdateEquipStatus();
-        }
+        // Presenter가 시키는 대로 텍스트 업데이트
+        inventoryInfoText.text = infoText;
     }
 
+    public void Close()
+    {
+        // Presenter의 지시에 따라 UI 닫음
+        CloseUI();
+    }
+
+    // UI가 파괴될 때 Presenter도 정리 -> 메모리 누수 방지
     private void OnDestroy()
     {
-        if (inventoryData != null)
-        {
-            inventoryData.OnInventoryChanged -= OnInventoryChanged;
-        }
+        presenter?.Dispose();
     }
 }
