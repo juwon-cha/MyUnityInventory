@@ -21,11 +21,14 @@ public class StatusUI : BaseUI, IStatusView
     {
         base.SetInfo(uiData);
 
-        var model = GameManager.Instance.PlayerCharacter.Inventory;
-        presenter = new StatusPresenter(this, model);
+        if(presenter == null)
+        {
+            var model = GameManager.Instance.PlayerCharacter.Inventory;
+            presenter = new StatusPresenter(this, model);
 
-        closeBtn.onClick.RemoveAllListeners();
-        closeBtn.onClick.AddListener(() => OnCloseButtonClicked?.Invoke());
+            closeBtn.onClick.RemoveAllListeners();
+            closeBtn.onClick.AddListener(() => OnCloseButtonClicked?.Invoke());
+        }
     }
 
     public void UpdateStats(UserItemStats totalStats)

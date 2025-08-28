@@ -23,12 +23,15 @@ public class InventoryUI : BaseUI, IInventoryView
     {
         base.SetInfo(uiData);
 
-        // Model을 가져와 Presenter를 생성하고 View(자기 자신)와 연결
-        var model = GameManager.Instance.PlayerCharacter.Inventory;
-        presenter = new InventoryPresenter(this, model);
+        if(presenter == null)
+        {
+            // Model을 가져와 Presenter를 생성하고 View(자기 자신)와 연결
+            var model = GameManager.Instance.PlayerCharacter.Inventory;
+            presenter = new InventoryPresenter(this, model);
 
-        closeBtn.onClick.RemoveAllListeners();
-        closeBtn.onClick.AddListener(() => OnCloseButtonClicked?.Invoke());
+            closeBtn.onClick.RemoveAllListeners();
+            closeBtn.onClick.AddListener(() => OnCloseButtonClicked?.Invoke());
+        }
     }
 
     public void DisplayItems(List<InventoryItemSlotData> items)
